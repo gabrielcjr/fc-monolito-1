@@ -15,8 +15,8 @@ export default class InvoiceFacade implements InvoiceFacadeInterface {
     this._findUseCase = usecasesProps.findUseCase;
   }
 
-  generateInvoice(input: GenerateInvoiceFacadeInputDto): Promise<GenerateInvoiceFacadeOutputDto> {
-    return this._generateUseCase.execute(input)
+  async generateInvoice(input: GenerateInvoiceFacadeInputDto): Promise<GenerateInvoiceFacadeOutputDto> {
+    return await this._generateUseCase.execute(input)
   }
 
 }
