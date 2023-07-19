@@ -12,6 +12,7 @@ export default class GenerateInvoiceUseCase {
 
   async execute(input: GenerateInvoiceUseCaseInputDto): Promise<GenerateInvoiceUseCaseOutputDto> {
     const props = {
+      id: new Id(input.id) || new Id(),
       name: input.name,
       document: input.document,
       address: new Address({
