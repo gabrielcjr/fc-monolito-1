@@ -5,6 +5,8 @@ type ProductProps = {
   id?: Id
   name: string
   price: number
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export default class Product extends BaseEntity {
@@ -13,7 +15,7 @@ export default class Product extends BaseEntity {
   private _price: number
 
   constructor(props: ProductProps) {
-    super(props.id);
+    super(props.id, props.createdAt, props.updatedAt);
     this._name = props.name
     this._price = props.price
   }
