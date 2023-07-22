@@ -20,5 +20,6 @@ describe('E2E test for client', () => {
 			});
 
 		expect(response.status).toBe(200);
+		expect(response.body).toEqual({});
 	});
 });
