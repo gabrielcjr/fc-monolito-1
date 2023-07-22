@@ -4,7 +4,7 @@ import Invoice from "../domain/invoice.entity";
 import Product from "../domain/product.entity";
 import InvoiceGateway from "../gateway/invoice.gateway";
 import { InvoiceModel } from "./invoice.model";
-import { ProductModel } from "./product.model";
+import { InvoiceProductModel } from "./product.model";
 
 export default class InvoiceRepository implements InvoiceGateway {
   async save(invoice: Invoice): Promise<void> {
@@ -29,7 +29,7 @@ export default class InvoiceRepository implements InvoiceGateway {
       updatedAt: new Date(),
     },
     {
-      include: [{ model: ProductModel }],
+      include: [{ model: InvoiceProductModel }],
     })
   }
   async find(id: string): Promise<Invoice> {
@@ -40,7 +40,7 @@ export default class InvoiceRepository implements InvoiceGateway {
         },
         include: [
           { 
-            model:ProductModel
+            model:InvoiceProductModel
           }
         ]
       }
