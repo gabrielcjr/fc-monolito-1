@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
 import { InvoiceModel } from "./invoice.model";
-import { ProductModel } from "./product.model";
+import { InvoiceProductModel } from "./product.model";
 import Id from "../../@shared/domain/value-object/id.value-object";
 import Address from "../domain/address.value-object";
 import Product from "../domain/product.entity";
@@ -18,7 +18,7 @@ describe("InvoiceRepository test", () => {
       sync: { force: true },
     });
 
-    await sequelize.addModels([InvoiceModel, ProductModel]);
+    await sequelize.addModels([InvoiceModel, InvoiceProductModel]);
     await sequelize.sync();
   });
 
@@ -109,7 +109,7 @@ describe("InvoiceRepository test", () => {
       updatedAt: new Date(),
     },
     {
-      include: [{ model: ProductModel }],
+      include: [{ model: InvoiceProductModel }],
     }
 );
 
