@@ -11,7 +11,13 @@ clientRoute.post('/', async (req: Request, res: Response) => {
     const clientDto: AddClientFacadeInputDto = {
       name: req.body.name,
       email: req.body.email,
-      address: req.body.address
+      document: req.body.document,
+      street: req.body.street,
+      number: req.body.number,
+      complement: req.body.complement,
+      city: req.body.city,
+      state: req.body.state,
+      zipCode: req.body.zipCode,
     };
     const output = await clientFacade.add(clientDto);
     res.send(output);

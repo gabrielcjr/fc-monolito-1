@@ -5,6 +5,8 @@ import ClientRepository from "../repository/client.repository";
 import AddClientUseCase from "../usecase/add-client/add-client.usecase";
 import FindClientUseCase from "../usecase/find-client/find-client.usecase";
 import ClientAdmFacade from "./client-adm.facade";
+import { OrderModel } from "../../checkout/repository/order.model";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 
 describe("ClientAdmFacade test", () => {
   let sequelize: Sequelize;
@@ -17,7 +19,7 @@ describe("ClientAdmFacade test", () => {
       sync: { force: true },
     });
 
-    await sequelize.addModels([ClientModel]);
+    await sequelize.addModels([ClientModel, OrderModel, CatalogProductModel]);
     await sequelize.sync();
   });
 
@@ -37,7 +39,13 @@ describe("ClientAdmFacade test", () => {
       id: "1",
       name: "Client 1",
       email: "x@x.com",
-      address: "Address 1",
+      document: "123",
+      street: "Street 1",
+      number: "1",
+      complement: "Complement 1",
+      city: "City 1",
+      state: "State 1",
+      zipCode: "123",
     };
 
     await facade.add(input);
@@ -47,7 +55,13 @@ describe("ClientAdmFacade test", () => {
     expect(client).toBeDefined();
     expect(client.name).toBe(input.name);
     expect(client.email).toBe(input.email);
-    expect(client.address).toBe(input.address);
+    expect(client.document).toEqual(input.document);
+    expect(client.street).toEqual(input.street);
+    expect(client.number).toEqual(input.number);
+    expect(client.complement).toEqual(input.complement);
+    expect(client.city).toEqual(input.city);
+    expect(client.state).toEqual(input.state);
+    expect(client.zipCode).toEqual(input.zipCode);
   });
 
   it("should find a client", async () => {
@@ -65,7 +79,13 @@ describe("ClientAdmFacade test", () => {
       id: "1",
       name: "Client 1",
       email: "x@x.com",
-      address: "Address 1",
+      document: "123",
+      street: "Street 1",
+      number: "1",
+      complement: "Complement 1",
+      city: "City 1",
+      state: "State 1",
+      zipCode: "123",
     };
 
     await facade.add(input);
@@ -76,6 +96,12 @@ describe("ClientAdmFacade test", () => {
     expect(client.id).toBe(input.id);
     expect(client.name).toBe(input.name);
     expect(client.email).toBe(input.email);
-    expect(client.address).toBe(input.address);
+    expect(client.document).toEqual(input.document);
+    expect(client.street).toEqual(input.street);
+    expect(client.number).toEqual(input.number);
+    expect(client.complement).toEqual(input.complement);
+    expect(client.city).toEqual(input.city);
+    expect(client.state).toEqual(input.state);
+    expect(client.zipCode).toEqual(input.zipCode);
   });
 });

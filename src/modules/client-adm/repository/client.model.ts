@@ -1,4 +1,5 @@
-import { Column, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { OrderModel } from "../../checkout/repository/order.model";
 
 @Table({
   tableName: "clients",
@@ -11,12 +12,37 @@ export class ClientModel extends Model {
 
   @Column({ allowNull: false })
   name: string;
-
+  
   @Column({ allowNull: false })
   email: string;
+  
+  @Column({ allowNull: false })
+  document: string;
 
   @Column({ allowNull: false })
-  address: string;
+  street: string;
+  
+  @Column({ allowNull: false })
+  number: string;
+  
+  @Column({ allowNull: false })
+  complement: string;
+  
+  @Column({ allowNull: false })
+  city: string;
+  
+  @Column({ allowNull: false })
+  state: string;
+  
+  @Column({ allowNull: false })
+  zipCode: string;
+
+  @ForeignKey(() => OrderModel)
+  @Column({ allowNull: false })
+  order_id: string;
+
+  @BelongsTo(() => OrderModel)
+  order: OrderModel;
 
   @Column({ allowNull: false })
   createdAt: Date;
