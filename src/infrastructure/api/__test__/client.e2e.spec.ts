@@ -1,5 +1,5 @@
-import { app, sequelize } from '../express';
 import request from 'supertest';
+import { app, sequelize } from '../express';
 
 describe('E2E test for client', () => {
 	beforeEach(async () => {
@@ -16,7 +16,13 @@ describe('E2E test for client', () => {
 			.send({
 				name: 'Client 1',
 				email: 'client@email.com',
-				address: 'Client address',
+				document: "123",
+				street: "street 1",
+				number: "1",
+				complement: "",
+				city: "São Paulo",
+				state: "SP",
+				zipCode: "1234567890",
 			});
 
 		expect(response.status).toBe(200);
