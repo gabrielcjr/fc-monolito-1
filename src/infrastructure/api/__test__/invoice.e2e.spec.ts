@@ -1,7 +1,7 @@
+import request from 'supertest';
 import { GenerateInvoiceFacadeInputDto } from '../../../modules/invoice/facade/invoice.facade.interface';
 import InvoiceFacadeFactory from '../../../modules/invoice/factory/facade.factory';
 import { app, sequelize } from '../express';
-import request from 'supertest';
 
 describe('E2E test for invoice', () => {
 	beforeEach(async () => {
@@ -33,10 +33,8 @@ describe('E2E test for invoice', () => {
         const generatedInvoice = await invoiceFacade.generateInvoice(invoiceInput)
 
 		const response = await request(app)
-			.get('/invoice')
-			.send({
-				id: generatedInvoice.id
-			});
+			.get(`/invoice/${generatedInvoice.id}`)
+			.send();
 
 		expect(response.status).toBe(200);
 		expect(response.body.id).toBeDefined();
