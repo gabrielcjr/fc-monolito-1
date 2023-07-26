@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import Id from "../../@shared/domain/value-object/id.value-object";
+import { OrderModel } from "../../checkout/repository/order.model";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 import Client from "../domain/client.entity";
 import { ClientModel } from "./client.model";
 import ClientRepository from "./client.repository";
-import { OrderModel } from "../../checkout/repository/order.model";
-import CatalogProductModel from "../../store-catalog/repository/product.model";
 
 describe("ClientRepository test", () => {
   let sequelize: Sequelize;
@@ -64,7 +64,13 @@ describe("ClientRepository test", () => {
       id: "1",
       name: "Client 1",
       email: "x@x.com",
-      address: "Address 1",
+      document: "123",
+      street: "street 1",
+      number: "1",
+      complement: "",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "1234567890",
       createdAt: new Date(),
       updatedAt: new Date(),
     });
