@@ -2,7 +2,7 @@ import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequeli
 import { OrderModel } from "../../checkout/repository/order.model";
 
 @Table({
-  tableName: "products",
+  tableName: "catalog-products",
   timestamps: false,
 })
 export default class CatalogProductModel extends Model {
@@ -20,7 +20,7 @@ export default class CatalogProductModel extends Model {
   salesPrice: number;
 
   @ForeignKey(() => OrderModel)
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   order_id: string;
 
   @BelongsTo(() => OrderModel)
