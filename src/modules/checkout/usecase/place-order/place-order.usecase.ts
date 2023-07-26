@@ -51,13 +51,13 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
             id: new Id(client.id),
             name: client.name,
             email: client.email,
-            document: "123",
-            street: "Client street",
-            number: "Client number",
-            complement: "Client complement",
-            city: "Client city",
-            state: "Client state",
-            zipCode: "Client zipCode",
+            document: client.document,
+            street: client.street,
+            number: client.number,
+            complement: client.complement,
+            city: client.city,
+            state: client.state,
+            zipCode: client.zipCode,
         });
 
         const order = new Order({
@@ -90,6 +90,7 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
                     })
                 })
                 : null;
+                
         payment.status === "approved" && order.approved();
         this._repository.addOrder(order);
 
@@ -100,14 +101,14 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
             total: order.total,
             products: order.products.map((p) => {
                 return {
-                    productId: p.id.id
+                    id: p.id.id
                 }
             }),
         }
     }
 
     private async validateProducts(input: PlaceOrderInputDto): Promise<void> {
-        if (input.products.length === 0) {
+        if (!input.products || input.products.length === 0) {
             throw new Error("No products selected");
         }
 
@@ -125,9 +126,11 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
 
     private async getProduct(productId: string): Promise<Product> {
         const product = await this._catalogFacade.find({ id: productId })
+        
         if (!product) {
             throw new Error("Product not found");
         }
+        
         const productProps = {
             id: new Id(product.id),
             name: product.name,
