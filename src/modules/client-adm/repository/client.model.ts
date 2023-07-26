@@ -38,7 +38,7 @@ export class ClientModel extends Model {
   zipCode: string;
 
   @ForeignKey(() => OrderModel)
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   order_id: string;
 
   @BelongsTo(() => OrderModel)
