@@ -1,17 +1,27 @@
 import request from 'supertest';
+import { Umzug } from "umzug";
 import ClientRepository from '../../../modules/client-adm/repository/client.repository';
 import AddClientUseCase from '../../../modules/client-adm/usecase/add-client/add-client.usecase';
 import ProductRepository from '../../../modules/product-adm/repository/product.repository';
 import AddProductUseCase from '../../../modules/product-adm/usecase/add-product/add-product.usecase';
 import { app, sequelize } from '../express';
+import { migrator } from "./config-migrations/migrator";
 
 describe('E2E test for checkout', () => {
+	let migration: Umzug<any>;
+
 	beforeEach(async () => {
-		await sequelize.sync({ force: true });
+		migration = migrator(sequelize)
+		await migration.up()
 	});
 
-	afterAll(async () => {
-		await sequelize.close();
+	afterEach(async () => {
+		if (!migration || !sequelize) {
+      return 
+    }
+    migration = migrator(sequelize)
+    await migration.down()
+    await sequelize.close()
 	});
 
 	it('should create a checkout', async () => {
