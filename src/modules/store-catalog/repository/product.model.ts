@@ -2,7 +2,7 @@ import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequeli
 import { OrderModel } from "../../checkout/repository/order.model";
 
 @Table({
-  tableName: "catalog-products",
+  tableName: "products",
   timestamps: false,
 })
 export default class CatalogProductModel extends Model {

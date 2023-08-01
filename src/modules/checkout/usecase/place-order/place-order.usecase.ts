@@ -65,11 +65,14 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
             products,
         });
 
+        console.log({ orderTotal: order.total})
+
         const payment = await this._paymentFacade.process({
             orderId: order.id.id,
             amount: order.total
         })
 
+        console.log({ payment })
         const invoice = 
             payment.status === "approved" ?
                 await this._invoiceFacade.generateInvoice({
@@ -90,8 +93,11 @@ export default class PlaceOrderUseCase implements UseCaseInterface {
                     })
                 })
                 : null;
-                
+
+        console.log({ invoice })
+
         payment.status === "approved" && order.approved();
+        console.log({ order })
         this._repository.addOrder(order);
 
         return {

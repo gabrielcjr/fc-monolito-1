@@ -1,17 +1,41 @@
+import express, { Express } from 'express';
+import { Sequelize } from "sequelize-typescript";
 import request from 'supertest';
 import { Umzug } from "umzug";
+import { OrderModel } from "../../../modules/checkout/repository/order.model";
+import { ClientModel } from "../../../modules/client-adm/repository/client.model";
 import ClientRepository from '../../../modules/client-adm/repository/client.repository';
 import AddClientUseCase from '../../../modules/client-adm/usecase/add-client/add-client.usecase';
+import { InvoiceModel } from "../../../modules/invoice/repository/invoice.model";
+import { InvoiceProductModel } from "../../../modules/invoice/repository/product.model";
+import TransactionModel from '../../../modules/payment/repository/transaction.model';
+import { ProductModel } from "../../../modules/product-adm/repository/product.model";
 import ProductRepository from '../../../modules/product-adm/repository/product.repository';
 import AddProductUseCase from '../../../modules/product-adm/usecase/add-product/add-product.usecase';
-import { app, sequelize } from '../express';
+import CatalogProductModel from "../../../modules/store-catalog/repository/product.model";
+import { checkoutRoute } from "../routes/checkout.route";
 import { migrator } from "./config-migrations/migrator";
 
 describe('E2E test for checkout', () => {
+
+	const app: Express = express()
+  app.use(express.json())
+  app.use("/checkout", checkoutRoute)
+
+	let sequelize: Sequelize
+
 	let migration: Umzug<any>;
 
 	beforeEach(async () => {
+    sequelize = new Sequelize({
+      dialect: 'sqlite',
+      storage: ":memory:",
+      logging: false
+    })
+
+		await sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
 		migration = migrator(sequelize)
+		console.log({ migration })
 		await migration.up()
 	});
 
@@ -49,6 +73,11 @@ describe('E2E test for checkout', () => {
 			purchasePrice: 123,
 			stock: 10
 		})
+		CatalogProductModel.update(
+			{ salesPrice: product.purchasePrice },
+			{ where: { id: product.id } }
+		);
+		console.log({ product })
 		const response = await request(app)
 			.post('/checkout')
 			.send({

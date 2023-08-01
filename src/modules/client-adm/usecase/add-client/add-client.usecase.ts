@@ -28,21 +28,25 @@ export default class AddClientUseCase {
     };
 
     const client = new Client(props);
-    this._clientRepository.add(client);
+    try {
+      await this._clientRepository.add(client);
 
-    return {
-      id: client.id.id,
-      name: client.name,
-      email: client.email,
-      document: client.document,
-      street: client.street,
-      number: client.number,
-      complement: client.complement,
-      city: client.city,
-      state: client.state,
-      zipCode: client.zipCode,
-      createdAt: client.createdAt,
-      updatedAt: client.updatedAt,
-    };
+      return {
+        id: client.id.id,
+        name: client.name,
+        email: client.email,
+        document: client.document,
+        street: client.street,
+        number: client.number,
+        complement: client.complement,
+        city: client.city,
+        state: client.state,
+        zipCode: client.zipCode,
+        createdAt: client.createdAt,
+        updatedAt: client.updatedAt,
+      };
+    } catch (e) {
+      console.error({ e })
+    }
   }
 }

@@ -1,15 +1,16 @@
 import express, { Express } from 'express';
 import { Sequelize } from 'sequelize-typescript';
-import { ProductModel } from '../../modules/product-adm/repository/product.model';
-import { InvoiceProductModel } from '../../modules/invoice/repository/product.model';
-import { InvoiceModel } from '../../modules/invoice/repository/invoice.model';
-import { productRoute } from './routes/product.route';
-import { clientRoute } from './routes/clients.route';
-import { ClientModel } from '../../modules/client-adm/repository/client.model';
-import { invoiceRoute } from './routes/invoice.route';
-import { checkoutRoute } from './routes/checkout.route';
 import { OrderModel } from '../../modules/checkout/repository/order.model';
+import { ClientModel } from '../../modules/client-adm/repository/client.model';
+import { InvoiceModel } from '../../modules/invoice/repository/invoice.model';
+import { InvoiceProductModel } from '../../modules/invoice/repository/product.model';
+import TransactionModel from '../../modules/payment/repository/transaction.model';
+import { ProductModel } from '../../modules/product-adm/repository/product.model';
 import CatalogProductModel from '../../modules/store-catalog/repository/product.model';
+import { checkoutRoute } from './routes/checkout.route';
+import { clientRoute } from './routes/clients.route';
+import { invoiceRoute } from './routes/invoice.route';
+import { productRoute } from './routes/product.route';
 
 export const app: Express = express();
 app.use(express.json());
@@ -26,7 +27,7 @@ async function setupDb() {
     storage: ':memory:',
     logging: false,
   });
-  await sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel]);
+  await sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
   await sequelize.sync();
 }
 setupDb();

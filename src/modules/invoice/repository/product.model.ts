@@ -2,7 +2,7 @@ import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequeli
 import { InvoiceModel } from "./invoice.model";
 
 @Table({
-  tableName: "invoice_products",
+  tableName: "products",
   timestamps: false,
 })
 export class InvoiceProductModel extends Model {
