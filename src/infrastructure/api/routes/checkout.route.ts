@@ -25,9 +25,10 @@ checkoutRoute.post('/', async (req: Request, res: Response) => {
       products: req.body.products,
     };
     const output = await placeOrderUseCase.execute(placeOrderInputDto);
+    console.log(output);
     res.send(output);
   } catch (err) {
-    console.error({ err })
+    console.log(err);
     res.status(500).send(err);
   }
 });

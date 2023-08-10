@@ -19,33 +19,32 @@ import { migrator } from "./config-migrations/migrator";
 describe('E2E test for checkout', () => {
 
 	const app: Express = express()
-  app.use(express.json())
-  app.use("/checkout", checkoutRoute)
+	app.use(express.json())
+	app.use("/checkout", checkoutRoute)
 
 	let sequelize: Sequelize
 
-	let migration: Umzug<any>;
+	let migration: Umzug<Sequelize>;
 
 	beforeEach(async () => {
-    sequelize = new Sequelize({
-      dialect: 'sqlite',
-      storage: ":memory:",
-      logging: false
-    })
+		sequelize = new Sequelize({
+			dialect: 'sqlite',
+			storage: ":memory:",
+			logging: false
+		})
 
-		await sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
+		sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
+
 		migration = migrator(sequelize)
-		console.log({ migration })
 		await migration.up()
 	});
 
 	afterEach(async () => {
 		if (!migration || !sequelize) {
-      return 
-    }
-    migration = migrator(sequelize)
-    await migration.down()
-    await sequelize.close()
+			return
+		}
+		await migration.down()
+		await sequelize.close()
 	});
 
 	it('should create a checkout', async () => {
@@ -53,15 +52,15 @@ describe('E2E test for checkout', () => {
     const addClientUsecase = new AddClientUseCase(repository);
 		const client = await addClientUsecase.execute(
 			{
-					name: 'checkout 1',
-					email: 'checkout@email.com',
-					document: "123",
-					street: "street 1",
-					number: "1",
-					complement: "",
-					city: "São Paulo",
-					state: "SP",
-					zipCode: "1234567890",
+				name: 'checkout 1',
+				email: 'checkout@email.com',
+				document: "123",
+				street: "street 1",
+				number: "1",
+				complement: "",
+				city: "São Paulo",
+				state: "SP",
+				zipCode: "1234567890",
 			}
 		)
 
@@ -73,11 +72,12 @@ describe('E2E test for checkout', () => {
 			purchasePrice: 123,
 			stock: 10
 		})
+		
 		CatalogProductModel.update(
 			{ salesPrice: product.purchasePrice },
 			{ where: { id: product.id } }
 		);
-		console.log({ product })
+
 		const response = await request(app)
 			.post('/checkout')
 			.send({
@@ -85,7 +85,16 @@ describe('E2E test for checkout', () => {
 				products: [product].map(p => ({ productId: p.id }))
 			});
 
+		console.log(response.body)
 		expect(response.status).toBe(200);
-		expect(response.body).toEqual({});
+
+		expect(response.body).toEqual({
+			id: expect.any(String),
+			clientId: expect.any(String),
+			invoiceId: expect.any(String),
+			status: 'approved',
+			total: 123,
+			products: response.body.products
+		});
 	});
 });

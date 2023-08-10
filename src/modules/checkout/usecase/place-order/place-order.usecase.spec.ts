@@ -94,10 +94,10 @@ describe("PlaceOrderUseCase unit test", () => {
             );
         });
 
-        it("should return a produt", async () => {
+        it("should return a product", async () => {
             const mockCatalogFacade = {
                 find: jest.fn().mockResolvedValue({
-                    id: "0",
+                    id: "1",
                     name: "Product 0",
                     description: "Product 0 description",
                     salesPrice: 0,
@@ -107,13 +107,15 @@ describe("PlaceOrderUseCase unit test", () => {
             //@ts-expect-error - force set catalogFacade
             placeOrderUseCase["_catalogFacade"] = mockCatalogFacade;
 
+            const propsProduct = {
+                id: new Id("1"),
+                name: "Product 0",
+                description: "Product 0 description",
+                salesPrice: 0
+            }
+
             await expect(placeOrderUseCase["getProduct"]("0")).resolves.toEqual(
-                new Product({
-                    id: new Id("0"),
-                    name: "Product 0",
-                    description: "Product 0 description",
-                    salesPrice: 0,
-                })
+                new Product(propsProduct)
             );
         });
     });
@@ -152,12 +154,12 @@ describe("PlaceOrderUseCase unit test", () => {
             };
             //@ts-expect-error - no params in constructor
             const placeOrderUseCase = new PlaceOrderUseCase();
-            
+
             const mockValidateProducts = jest
-            //@ts-expect-error - spy on private method
-            .spyOn(placeOrderUseCase, "validateProducts")
-            //@ts-expect-error - not return never
-            .mockRejectedValue(new Error("No products selected"));
+                //@ts-expect-error - spy on private method
+                .spyOn(placeOrderUseCase, "validateProducts")
+                //@ts-expect-error - not return never
+                .mockRejectedValue(new Error("No products selected"));
 
             //@ts-expect-error - force set clientFacade
             placeOrderUseCase["_clientFacade"] = mockClientFacade;
@@ -224,18 +226,18 @@ describe("PlaceOrderUseCase unit test", () => {
             };
 
             const mockValidateProducts = jest
-            //@ts-expect-error - spy on private method
-            .spyOn(placeOrderUseCase, "validateProducts")
-            //@ts-expect-error - not return never
-            .mockResolvedValue(null);
+                //@ts-expect-error - spy on private method
+                .spyOn(placeOrderUseCase, "validateProducts")
+                //@ts-expect-error - not return never
+                .mockResolvedValue(null);
 
             const mockGetProduct = jest
-            //@ts-expect-error - spy on private method
-            .spyOn(placeOrderUseCase, "getProduct")
-            //@ts-expect-error - not return never
-            .mockImplementation((productId: keyof typeof products) => {
-                return products[productId];
-            });
+                //@ts-expect-error - spy on private method
+                .spyOn(placeOrderUseCase, "getProduct")
+                //@ts-expect-error - not return never
+                .mockImplementation((productId: keyof typeof products) => {
+                    return products[productId];
+                });
 
             it("should not be approved", async () => {
                 mockPaymentFacade.process = mockPaymentFacade.process.mockReturnValue({
@@ -249,7 +251,7 @@ describe("PlaceOrderUseCase unit test", () => {
 
                 const input: PlaceOrderInputDto = {
                     clientId: "1c",
-                    products: [{ productId: "1" }, { productId: "2" } ]
+                    products: [{ productId: "1" }, { productId: "2" }]
                 };
 
                 let output = await placeOrderUseCase.execute(input);
@@ -257,8 +259,8 @@ describe("PlaceOrderUseCase unit test", () => {
                 expect(output.invoiceId).toBeNull();
                 expect(output.total).toBe(70);
                 expect(output.products).toStrictEqual([
-                    { id: "1"},
-                    { id: "2"},
+                    { id: "1" },
+                    { id: "2" },
                 ]);
                 expect(mockClientFacade.find).toHaveBeenCalledTimes(1);
                 expect(mockClientFacade.find).toHaveBeenCalledWith({ id: "1c" });
@@ -286,7 +288,7 @@ describe("PlaceOrderUseCase unit test", () => {
 
                 const input: PlaceOrderInputDto = {
                     clientId: "1c",
-                    products: [{ productId: "1" }, { productId: "2" } ]
+                    products: [{ productId: "1" }, { productId: "2" }]
                 };
 
                 let output = await placeOrderUseCase.execute(input);
@@ -294,8 +296,8 @@ describe("PlaceOrderUseCase unit test", () => {
                 expect(output.invoiceId).toBe("1i");
                 expect(output.total).toBe(70);
                 expect(output.products).toStrictEqual([
-                    { id: "1"},
-                    { id: "2"},
+                    { id: "1" },
+                    { id: "2" },
                 ]);
                 expect(mockClientFacade.find).toHaveBeenCalledTimes(1);
                 expect(mockClientFacade.find).toHaveBeenCalledWith({ id: "1c" });

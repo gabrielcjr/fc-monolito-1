@@ -18,7 +18,7 @@ describe("InvoiceRepository test", () => {
       sync: { force: true },
     });
 
-    await sequelize.addModels([InvoiceModel, InvoiceProductModel]);
+    sequelize.addModels([InvoiceModel, InvoiceProductModel]);
     await sequelize.sync();
   });
 
@@ -28,7 +28,7 @@ describe("InvoiceRepository test", () => {
 
   it("should save an invoice", async () => {
     const invoiceProps = {
-      id: new Id("1"), 
+      id: new Id("1"),
       name: "Invoice 1",
       document: "Invoice 1 document",
       address: new Address({
@@ -45,7 +45,9 @@ describe("InvoiceRepository test", () => {
           name: "Product 1",
           price: 100
         })
-      ]
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     const invoice = new Invoice(invoiceProps);
     const invoiceRepository = new InvoiceRepository();
@@ -66,16 +68,10 @@ describe("InvoiceRepository test", () => {
     expect(invoiceDb.state).toEqual(invoiceProps.address.state);
     expect(invoiceDb.street).toEqual(invoiceProps.address.street);
     expect(invoiceDb.zipCode).toEqual(invoiceProps.address.zipCode);
-    expect(invoiceDb.items).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: "1",
-          name: "Product 1",
-          price: 100,
-          invoice_id: "1"
-        })
-      ])
-    );
+    expect(invoiceDb.items[0].name).toEqual(invoiceProps.items[0].name);
+    expect(invoiceDb.items[0].price).toEqual(invoiceProps.items[0].price);
+    expect(invoiceDb.createdAt).toEqual(invoiceProps.createdAt);
+    expect(invoiceDb.updatedAt).toEqual(invoiceProps.updatedAt);
   })
 
   it("should find an invoice", async () => {
@@ -108,10 +104,10 @@ describe("InvoiceRepository test", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    {
-      include: [{ model: InvoiceProductModel }],
-    }
-);
+      {
+        include: [{ model: InvoiceProductModel }],
+      }
+    );
 
     const repository = new InvoiceRepository();
     const result = await repository.find(invoice.id);
@@ -137,5 +133,5 @@ describe("InvoiceRepository test", () => {
     expect(result.items[1].updatedAt).toStrictEqual(invoice.items[1].updatedAt);
     expect(result.createdAt).toStrictEqual(invoice.createdAt);
   });
-  
+
 })

@@ -8,6 +8,15 @@ import { InvoiceProductModel } from "./product.model";
 
 export default class InvoiceRepository implements InvoiceGateway {
   async save(invoice: Invoice): Promise<void> {
+    console.log(
+      invoice.items.map(item => ({
+        id: item.id.id,
+        name: item.name,
+        price: item.price,
+        createdAt: invoice.createdAt,
+        updatedAt: invoice.updatedAt,
+      }))
+    );
     await InvoiceModel.create({
       id: invoice.id.id,
       name: invoice.name,
@@ -22,25 +31,26 @@ export default class InvoiceRepository implements InvoiceGateway {
         id: item.id.id,
         name: item.name,
         price: item.price,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: invoice.createdAt,
+        updatedAt: invoice.updatedAt,
       })),
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    {
-      include: [{ model: InvoiceProductModel }],
-    })
+      {
+        include: ["items"]
+      }
+    )
   }
   async find(id: string): Promise<Invoice> {
     const invoice = await InvoiceModel.findOne(
-      { 
-        where: { 
+      {
+        where: {
           id
         },
         include: [
-          { 
-            model:InvoiceProductModel
+          {
+            model: InvoiceProductModel
           }
         ]
       }
@@ -63,9 +73,9 @@ export default class InvoiceRepository implements InvoiceGateway {
         zipCode: invoice.zipCode,
       }),
       items: invoice.items.map(item => new Product(
-        { 
-          id: new Id(item.id), 
-          name: item.name, 
+        {
+          id: new Id(item.id),
+          name: item.name,
           price: item.price,
           createdAt: item.createdAt,
           updatedAt: item.updatedAt,

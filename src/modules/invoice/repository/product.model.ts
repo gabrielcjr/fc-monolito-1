@@ -1,8 +1,10 @@
 import { BelongsTo, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { InvoiceModel } from "./invoice.model";
+import { ProductModel } from "../../product-adm/repository/product.model";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 
 @Table({
-  tableName: "products",
+  tableName: "invoice_items",
   timestamps: false,
 })
 export class InvoiceProductModel extends Model {
@@ -22,6 +24,13 @@ export class InvoiceProductModel extends Model {
 
   @BelongsTo(() => InvoiceModel)
   invoice: InvoiceModel;
+
+  @ForeignKey(() => CatalogProductModel)
+  @Column({ allowNull: false })
+  product_id: string;
+
+  @BelongsTo(() => CatalogProductModel)
+  product: CatalogProductModel;
 
   @Column({ allowNull: false })
   createdAt: Date;

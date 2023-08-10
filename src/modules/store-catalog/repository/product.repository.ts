@@ -4,6 +4,18 @@ import ProductGateway from "../gateway/product.gateway";
 import CatalogProductModel from "./product.model";
 
 export default class ProductRepository implements ProductGateway {
+
+  async create(entity: Product): Promise<void> {
+    await CatalogProductModel.create({
+      id: entity.id.id,
+      name: entity.name,
+      description: entity.description,
+      salesPrice: entity.salesPrice,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
+  }
+
   async findAll(): Promise<Product[]> {
     const products = await CatalogProductModel.findAll();
 

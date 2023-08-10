@@ -2,7 +2,6 @@ import { DataTypes, Sequelize } from 'sequelize';
 import { MigrationFn } from 'umzug';
 
 export const up: MigrationFn<Sequelize> = async ({ context: sequelize }) => {
-  console.log("Migration UP!!!! =========")
   await sequelize.getQueryInterface().createTable('products', {
     id: {
       type: DataTypes.STRING(255),
@@ -36,10 +35,18 @@ export const up: MigrationFn<Sequelize> = async ({ context: sequelize }) => {
     order_id: {
       type: DataTypes.STRING(255),
       allowNull: true,
+      references: {
+        model: 'orders',
+        key: 'id'
+      }
     },
     invoice_id: {
       type: DataTypes.STRING(255),
       allowNull: true,
+      references: {
+        model: 'invoices',
+        key: 'id'
+      }
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -132,6 +139,44 @@ export const up: MigrationFn<Sequelize> = async ({ context: sequelize }) => {
       allowNull: false,
     },
   })
+
+  await sequelize.getQueryInterface().createTable('orders', {
+    id: {
+      type: DataTypes.STRING(255),
+      primaryKey: true,
+      allowNull: false
+    },
+    client: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      references: {
+        model: 'clients',
+        key: 'id'
+      }
+    },
+    products: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      references: {
+        model: 'products',
+        key: 'id'
+      }
+    },
+    status: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    }
+
+  })
+
   await sequelize.getQueryInterface().createTable('invoices', {
     id: {
       type: DataTypes.STRING(255),
@@ -189,5 +234,6 @@ export const down: MigrationFn<Sequelize> = async ({ context: sequelize }) => {
   await sequelize.getQueryInterface().dropTable('products')
   await sequelize.getQueryInterface().dropTable('clients')
   await sequelize.getQueryInterface().dropTable('transactions')
+  await sequelize.getQueryInterface().dropTable('orders')
   await sequelize.getQueryInterface().dropTable('invoices')
 } 
