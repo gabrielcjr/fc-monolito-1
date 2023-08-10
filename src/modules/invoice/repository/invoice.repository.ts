@@ -1,22 +1,15 @@
 import Id from "../../@shared/domain/value-object/id.value-object";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
 import Address from "../domain/address.value-object";
 import Invoice from "../domain/invoice.entity";
-import Product from "../domain/product.entity";
+import Item from "../domain/item.entity";
 import InvoiceGateway from "../gateway/invoice.gateway";
 import { InvoiceModel } from "./invoice.model";
-import { InvoiceProductModel } from "./product.model";
+import { InvoiceItemModel } from "./item.model";
 
 export default class InvoiceRepository implements InvoiceGateway {
   async save(invoice: Invoice): Promise<void> {
-    console.log(
-      invoice.items.map(item => ({
-        id: item.id.id,
-        name: item.name,
-        price: item.price,
-        createdAt: invoice.createdAt,
-        updatedAt: invoice.updatedAt,
-      }))
-    );
+
     await InvoiceModel.create({
       id: invoice.id.id,
       name: invoice.name,
@@ -38,7 +31,7 @@ export default class InvoiceRepository implements InvoiceGateway {
       updatedAt: new Date(),
     },
       {
-        include: ["items"]
+        include: [InvoiceItemModel]
       }
     )
   }
@@ -50,7 +43,7 @@ export default class InvoiceRepository implements InvoiceGateway {
         },
         include: [
           {
-            model: InvoiceProductModel
+            model: InvoiceItemModel
           }
         ]
       }
@@ -72,7 +65,7 @@ export default class InvoiceRepository implements InvoiceGateway {
         state: invoice.state,
         zipCode: invoice.zipCode,
       }),
-      items: invoice.items.map(item => new Product(
+      items: invoice.items.map(item => new Item(
         {
           id: new Id(item.id),
           name: item.name,

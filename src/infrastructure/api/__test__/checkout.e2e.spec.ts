@@ -7,7 +7,7 @@ import { ClientModel } from "../../../modules/client-adm/repository/client.model
 import ClientRepository from '../../../modules/client-adm/repository/client.repository';
 import AddClientUseCase from '../../../modules/client-adm/usecase/add-client/add-client.usecase';
 import { InvoiceModel } from "../../../modules/invoice/repository/invoice.model";
-import { InvoiceProductModel } from "../../../modules/invoice/repository/product.model";
+import { InvoiceItemModel } from "../../../modules/invoice/repository/item.model";
 import TransactionModel from '../../../modules/payment/repository/transaction.model';
 import { ProductModel } from "../../../modules/product-adm/repository/product.model";
 import ProductRepository from '../../../modules/product-adm/repository/product.repository';
@@ -33,7 +33,7 @@ describe('E2E test for checkout', () => {
 			logging: false
 		})
 
-		sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
+		sequelize.addModels([ProductModel, InvoiceModel, InvoiceItemModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
 
 		migration = migrator(sequelize)
 		await migration.up()
@@ -85,7 +85,8 @@ describe('E2E test for checkout', () => {
 				products: [product].map(p => ({ productId: p.id }))
 			});
 
-		console.log(response.body)
+			console.log(response.body)
+
 		expect(response.status).toBe(200);
 
 		expect(response.body).toEqual({

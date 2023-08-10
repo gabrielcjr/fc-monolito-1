@@ -1,7 +1,7 @@
 import BaseEntity from "../../@shared/domain/entity/base.entity";
 import Id from "../../@shared/domain/value-object/id.value-object";
 
-type ProductProps = {
+type ItemsProps = {
   id?: Id
   name: string
   price: number
@@ -9,12 +9,12 @@ type ProductProps = {
   updatedAt?: Date
 }
 
-export default class Product extends BaseEntity {
+export default class Item extends BaseEntity {
 
   private _name: string
   private _price: number
 
-  constructor(props: ProductProps) {
+  constructor(props: ItemsProps) {
     super(props.id, props.createdAt, props.updatedAt);
     this._name = props.name
     this._price = props.price
