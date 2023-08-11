@@ -1,10 +1,10 @@
 import Id from "../../@shared/domain/value-object/id.value-object";
-import { default as Client, default as ClientEntity } from "../domain/client.entity";
+import { Client } from "../domain/client.entity";
 import ClientGateway from "../gateway/client.gateway";
 import { ClientModel } from "./client.model";
 
 export default class ClientRepository implements ClientGateway {
-  async add(client: ClientEntity): Promise<void> {
+  async add(client: Client): Promise<void> {
     await ClientModel.create({
       id: client.id.id,
       name: client.name,
@@ -20,7 +20,7 @@ export default class ClientRepository implements ClientGateway {
       updatedAt: client.updatedAt,
     });
   }
-  async find(id: string): Promise<ClientEntity> {
+  async find(id: string): Promise<Client> {
     const client = await ClientModel.findOne({ where: { id } });
     
     if (!client) {

@@ -22,7 +22,9 @@ checkoutRoute.post('/', async (req: Request, res: Response) => {
   try {
     const placeOrderInputDto: PlaceOrderInputDto = {
       clientId: req.body.clientId,
-      products: req.body.products,
+      products: req.body.products.map((product: any) => ({
+        productId: product,
+      })),
     };
     const output = await placeOrderUseCase.execute(placeOrderInputDto);
     res.send(output);

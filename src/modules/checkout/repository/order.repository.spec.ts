@@ -5,8 +5,11 @@ import { ClientModel } from "../../client-adm/repository/client.model";
 import OrderRepository from "./order.repository";
 import Order from "../domain/order.entity";
 import Product from "../domain/product.entity";
-import Client from "../../client-adm/domain/client.entity";
 import CatalogProductModel from "../../store-catalog/repository/product.model";
+import ClientRepository from "../../client-adm/repository/client.repository";
+import ProductRepository from "./product.repository";
+import { Client } from "../domain/client.entity";
+import { Client as ClientAdm } from "../../client-adm/domain/client.entity";
 
 describe("OrderRepository test", () => {
   let sequelize: Sequelize;
@@ -28,43 +31,78 @@ describe("OrderRepository test", () => {
   });
 
   it("should create an order", async () => {
+    const clientCheckout = new Client({
+      id: new Id("Client id 1"),
+      name: "Client name",
+      email: "client@email.com",
+      document: "123",
+      street: "Client street",
+      number: "Client number",
+      complement: "Client complement",
+      city: "Client city",
+      state: "Client state",
+      zipCode: "Client zipCode",
+    });
+
+    const clientAdm = new ClientAdm({
+      id: new Id("Client id 1"),
+      name: "Client name",
+      email: "client@email.com",
+      document: "123",
+      street: "Client street",
+      number: "Client number",
+      complement: "Client complement",
+      city: "Client city",
+      state: "Client state",
+      zipCode: "Client zipCode",
+    })
+
+    let clientRepository = new ClientRepository();
+
+    await clientRepository.add(clientAdm);
+
+    const productCheckout = new Product({
+      id: new Id("Product id 1"),
+      name: "Produt name",
+      description: "Product description",
+      salesPrice: 10,
+    })
+
+    const product = new Product({
+      id: new Id("Product id 1"),
+      name: "Produt name",
+      description: "Product description",
+      salesPrice: 10,
+    })
+
+    let productRepository = new ProductRepository();
+
+    await productRepository.create(product);
+
     const order = new Order({
-      id: new Id("Order id 1"),
-      client: new Client({
-        id: new Id("Client id 1"),
-        name: "Client name",
-        email: "client@email.com",
-        document: "123",
-        street: "Client street",
-        number: "Client number",
-        complement: "Client complement",
-        city: "Client city",
-        state: "Client state",
-        zipCode: "Client zipCode",
-      }),
+      id: new Id("1"),
+      client: clientCheckout,
       products: [
-        new Product({
-            id: new Id("Product id 1"),
-            name: "Produt name",
-            description: "Product description",
-            salesPrice: 10,
-        })
+        productCheckout
       ],
       status: "status",
       createdAt: new Date(),
       updatedAt: new Date()
     });
 
+    console.log(order)
     const repository = new OrderRepository();
     await repository.addOrder(order);
 
     const orderDb = await OrderModel.findOne({ 
-        where: { id: "Order id 1" },
-        include: [
-            { model: ClientModel },
-            { model: CatalogProductModel }
-        ]
+        where: { id: "1" },
+        // include: [
+        //     { model: ClientModel },
+        //     { model: CatalogProductModel }
+        // ]
     });
+
+    console.log(orderDb.toJSON())
 
     expect(orderDb).toBeDefined();
     expect(orderDb.id).toBe(order.id.id);
