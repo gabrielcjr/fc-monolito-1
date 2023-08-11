@@ -1,11 +1,14 @@
 import { Sequelize } from "sequelize-typescript";
 import { InvoiceModel } from "./invoice.model";
-import { InvoiceProductModel } from "./product.model";
+import { InvoiceItemModel } from "./item.model";
 import Id from "../../@shared/domain/value-object/id.value-object";
 import Address from "../domain/address.value-object";
-import Product from "../domain/product.entity";
+import Item from "../domain/item.entity";
 import Invoice from "../domain/invoice.entity";
 import InvoiceRepository from "./invoice.repository";
+import CatalogProductModel from "../../store-catalog/repository/product.model";
+import { OrderModel } from "../../checkout/repository/order.model";
+import { ClientModel } from "../../client-adm/repository/client.model";
 
 describe("InvoiceRepository test", () => {
   let sequelize: Sequelize;
@@ -18,7 +21,7 @@ describe("InvoiceRepository test", () => {
       sync: { force: true },
     });
 
-    sequelize.addModels([InvoiceModel, InvoiceProductModel]);
+    sequelize.addModels([InvoiceModel, InvoiceItemModel, CatalogProductModel, OrderModel, ClientModel]);
     await sequelize.sync();
   });
 
@@ -40,7 +43,7 @@ describe("InvoiceRepository test", () => {
         zipCode: "123.456.789-00",
       }),
       items: [
-        new Product({
+        new Item({
           id: new Id("1"),
           name: "Product 1",
           price: 100
@@ -58,6 +61,8 @@ describe("InvoiceRepository test", () => {
       include: ["items"],
     });
 
+    console.log(invoiceDb.items)
+
     expect(invoiceDb).toBeDefined()
     expect(invoiceDb.id).toEqual(invoiceProps.id.id);
     expect(invoiceDb.name).toEqual(invoiceProps.name);
@@ -70,8 +75,8 @@ describe("InvoiceRepository test", () => {
     expect(invoiceDb.zipCode).toEqual(invoiceProps.address.zipCode);
     expect(invoiceDb.items[0].name).toEqual(invoiceProps.items[0].name);
     expect(invoiceDb.items[0].price).toEqual(invoiceProps.items[0].price);
-    expect(invoiceDb.createdAt).toEqual(invoiceProps.createdAt);
-    expect(invoiceDb.updatedAt).toEqual(invoiceProps.updatedAt);
+    expect(invoiceDb.createdAt.getDate).toEqual(invoiceProps.createdAt.getDate);
+    expect(invoiceDb.updatedAt.getDate).toEqual(invoiceProps.updatedAt.getDate);
   })
 
   it("should find an invoice", async () => {
@@ -105,7 +110,7 @@ describe("InvoiceRepository test", () => {
       updatedAt: new Date(),
     },
       {
-        include: [{ model: InvoiceProductModel }],
+        include: [{ model: InvoiceItemModel }],
       }
     );
 

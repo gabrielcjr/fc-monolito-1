@@ -1,13 +1,39 @@
 import request from 'supertest';
-import { app, sequelize } from '../express';
+import { Sequelize } from "sequelize-typescript";
+import express, { Express } from 'express';
+import { ProductModel } from '../../../modules/product-adm/repository/product.model';
+import { productRoute } from '../routes/product.route';
+import { Umzug } from 'umzug';
+import { migrator } from "./config-migrations/migrator";
 
 describe('E2E test for product', () => {
+	const app: Express = express()
+	app.use(express.json())
+	app.use("/product", productRoute)
+
+	let sequelize: Sequelize
+
+	let migration: Umzug<Sequelize>;
+
 	beforeEach(async () => {
-		await sequelize.sync({ force: true });
+		sequelize = new Sequelize({
+			dialect: 'sqlite',
+			storage: ":memory:",
+			logging: false
+		})
+
+		sequelize.addModels([ProductModel]);
+
+		migration = migrator(sequelize)
+		await migration.up()
 	});
 
-	afterAll(async () => {
-		await sequelize.close();
+	afterEach(async () => {
+		if (!migration || !sequelize) {
+			return
+		}
+		await migration.down()
+		await sequelize.close()
 	});
 
 	it('should create a product', async () => {
@@ -19,6 +45,8 @@ describe('E2E test for product', () => {
 				purchasePrice: 10,
 				stock: 100,
 			});
+
+		let result = await ProductModel.findAll();
 
 		expect(response.status).toBe(200);
 		expect(response.body.id).toBeDefined();

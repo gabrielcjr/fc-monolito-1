@@ -7,7 +7,7 @@ import CatalogProductModel from "../../store-catalog/repository/product.model";
   tableName: "invoice_items",
   timestamps: false,
 })
-export class InvoiceProductModel extends Model {
+export class InvoiceItemModel extends Model {
   @PrimaryKey
   @Column({ allowNull: false })
   id: string;
@@ -24,13 +24,6 @@ export class InvoiceProductModel extends Model {
 
   @BelongsTo(() => InvoiceModel)
   invoice: InvoiceModel;
-
-  @ForeignKey(() => CatalogProductModel)
-  @Column({ allowNull: false })
-  product_id: string;
-
-  @BelongsTo(() => CatalogProductModel)
-  product: CatalogProductModel;
 
   @Column({ allowNull: false })
   createdAt: Date;

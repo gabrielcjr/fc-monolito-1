@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { OrderModel } from '../../modules/checkout/repository/order.model';
 import { ClientModel } from '../../modules/client-adm/repository/client.model';
 import { InvoiceModel } from '../../modules/invoice/repository/invoice.model';
-import { InvoiceProductModel } from '../../modules/invoice/repository/product.model';
+import { InvoiceItemModel } from '../../modules/invoice/repository/item.model';
 import TransactionModel from '../../modules/payment/repository/transaction.model';
 import { ProductModel } from '../../modules/product-adm/repository/product.model';
 import CatalogProductModel from '../../modules/store-catalog/repository/product.model';
@@ -27,7 +27,7 @@ async function setupDb() {
     storage: ':memory:',
     logging: false,
   });
-  await sequelize.addModels([ProductModel, InvoiceModel, InvoiceProductModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
+  await sequelize.addModels([ProductModel, InvoiceModel, InvoiceItemModel, ClientModel, OrderModel, CatalogProductModel, TransactionModel]);
   await sequelize.sync();
 }
 setupDb();
